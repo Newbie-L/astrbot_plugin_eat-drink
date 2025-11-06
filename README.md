@@ -1,8 +1,8 @@
-# helloworld
+# 吃喝点啥呢？
 
-AstrBot 插件模板
+AstrBot 插件
+用于随机推荐吃什么 喝什么
 
-A template plugin for AstrBot plugin feature
 
 # 支持
 
