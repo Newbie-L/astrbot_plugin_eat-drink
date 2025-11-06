@@ -39,7 +39,7 @@ DRINK_LIST = [
     "astrbot_plugin_eat-drink", 
     "Cybercat",
     "随机推荐吃什么、喝什么，选择困难症救星～", 
-    "1.0.1",
+    "1.0.2",
     "https://github.com/Newbie-L/astrbot_plugin_eat-drink"
 )
 class RandomFoodDrinkPlugin(Star):
