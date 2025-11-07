@@ -9,44 +9,38 @@ import os
     "astrbot_plugin_eatdrink", 
     "Cybercat",
     "随机推荐吃什么、喝什么，选择困难症救星～", 
-    "1.2.0", 
+    "1.1.0", 
     "https://github.com/Newbie-L/astrbot_plugin_eatdrink"
 )
-class RandomFoodDrinkPlugin(Star):
-    def __init__(self, context: Context):
-        super().__init__(context)
-        self.data_dir = StarTools.get_data_dir("astrbot_plugin_eatdrink")
-        os.makedirs(self.data_dir, exist_ok=True)
 
+class RandomFoodDrinkPlugin(Star):
+    DEFAULT_FOODS = ["火锅", "烤肉", "寿司", "麻辣烫", "螺蛳粉", "牛肉面"]
+    DEFAULT_DRINKS = ["奶茶", "咖啡", "可乐", "果汁", "柠檬水", "气泡水"]
+    
+    DEFAULT_LIST_MAP = {
+        "food.txt": DEFAULT_FOODS,
+        "drink.txt": DEFAULT_DRINKS,
+    }
+
+    def __init__(self, context: Context):
+        # ...
         self.food_list = self._load_list("food.txt")
         self.drink_list = self._load_list("drink.txt")
-        
-        logger.info("随机推荐插件初始化完成～")
-        logger.info(f"数据目录：{self.data_dir}")
-        logger.info(f"加载食物数量：{len(self.food_list)}，饮品数量：{len(self.drink_list)}")
+        # ...
 
     def _load_list(self, filename: str) -> list:
-        """读取插件数据目录下的 txt 文件，返回列表（每行一个条目）"""
-        file_path = os.path.join(self.data_dir, filename)
-        default_list = []
+        file_path = self.data_dir / filename # 使用 pathlib 的 / 运算符更简洁
+        default_list = self.DEFAULT_LIST_MAP.get(filename, [])
         
-        if filename == "food.txt":
-            default_list = [
-                "火锅", "烤肉", "寿司", "麻辣烫", "螺蛳粉", "牛肉面"
-            ]
-        elif filename == "drink.txt":
-            default_list = [
-                "奶茶", "咖啡", "可乐", "果汁", "柠檬水", "气泡水"
-            ]
-        
-        try:
-            # 读取文件内容（自动忽略空行和首尾空格）
-            with open(file_path, "r", encoding="utf-8") as f:
-                lines = [line.strip() for line in f.readlines() if line.strip()]
-            return lines if lines else default_list
-        except FileNotFoundError:
+        if not file_path.exists():
             logger.warning(f"未找到 {file_path}，将使用默认列表")
             return default_list
+        
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                lines = [line.strip() for line in f.readlines() if line.strip()]
+            # 如果用户文件为空，则尊重用户的选择，返回空列表
+            return lines if lines else default_list 
         except Exception as e:
             logger.error(f"读取 {file_path} 失败：{str(e)}，将使用默认列表")
             return default_list
