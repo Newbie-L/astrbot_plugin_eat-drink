@@ -6,14 +6,11 @@ import shutil
 from pathlib import Path
 
 
-# 插件核心配置
-PLUGIN_NAME = "astrbot_plugin_eatdrink"
-
 @register(
-    PLUGIN_NAME,
+    "astrbot_plugin_eatdrink",
     "Cybercat",
-    "随机推荐吃什么、喝什么，支持饮料分类推荐（如 /喝什么 奶茶）",
-    "1.2.0",
+    "随机推荐吃什么、喝什么的插件",
+    "1.2.1",
     "https://github.com/Newbie-L/astrbot_plugin_eatdrink"
 )
 class RandomFoodDrinkPlugin(Star):
@@ -48,20 +45,15 @@ class RandomFoodDrinkPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context) 
         
-        # 1. 路径定义（框架规范目录）
-        self.plugin_name = PLUGIN_NAME
-        self.target_data_dir = Path(StarTools.get_data_dir(self.plugin_name))  # 插件数据目录
-        self.plugin_root_dir = Path(__file__).parent  # 插件根目录
-        self.template_dir = self.plugin_root_dir / "templates"  # 模板文件目录
+        self.target_data_dir = Path(StarTools.get_data_dir("astrbot_plugin_eatdrink"))  # 插件数据目录
+        self.plugin_root_dir = Path(__file__).parent
+        self.template_dir = self.plugin_root_dir / "templates"
 
-        # 2. 自动复制模板文件（首次安装时）
         self._copy_template_files()
 
-        # 3. 加载数据（食物列表 + 饮品列表+分类映射）
         self.food_list, self.food_category_map = self._load_food_with_category()
         self.drink_list, self.drink_category_map = self._load_drink_with_category()
         
-        # 初始化日志（告知用户当前状态）
         logger.info(f"✅ 插件初始化完成，数据目录：{self.target_data_dir}")
         logger.info(f"📊 加载食物 {len(self.food_list)} 种，饮品 {len(self.drink_list)} 种")
         logger.info(f"📋 支持食物分类：{list(self.food_category_map.keys()) if self.food_category_map else '无'}") 
